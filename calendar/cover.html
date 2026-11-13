@@ -30,7 +30,7 @@
     <div class="goal">DECOY<br><em>WORD PACKS</em></div>
     <div class="sub">Custom word packs, live for players · Dec 31 2026</div>
     <div class="rule"></div>
-    <div class="big"><b>59</b><i>days left<br>of 61</i></div>
+    <div class="big"><b id="n">--</b><i>days left<br>of <span id="tot">61</span></i></div>
     <div class="ms">
       <div class="row done"><span class="d">NOV 02</span><span class="t">Pack format decided</span></div>
       <div class="row"><span class="d">NOV 16</span><span class="t">Editor + import working</span></div>
@@ -49,16 +49,25 @@
 </div>
 <script>
   var MARK={"11-16":1,"12-7":1,"12-28":1}, out="";
+  var START=new Date(2026,10,1), END=new Date(2026,11,31), DAY=864e5;
+  var now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  document.getElementById("tot").textContent=Math.round((END-START)/DAY)+1;
+  document.getElementById("n").textContent=Math.max(0,Math.round((END-today)/DAY));
   function days(m,y){return new Date(y,m,0).getDate();}
   [[11,2026],[12,2026]].forEach(function(my){
     for(var d=1; d<=days(my[0],my[1]); d++){
-      var c="cell";
-      if(my[0]===11&&d<2) c+=" torn";
-      else if(my[0]===11&&d===2) c+=" today";
+      var cell=new Date(my[1],my[0]-1,d), c="cell";
+      if(cell<today) c+=" torn";
+      else if(+cell===+today) c+=" today";
       else if(MARK[my[0]+"-"+d]) c+=" mark";
       else c+=" left";
       out+='<div class="'+c+'"><span>'+d+'</span></div>';
     }
   });
   document.getElementById("g").innerHTML=out;
+  document.querySelectorAll(".ms .row").forEach(function(r){
+    var t=(r.querySelector(".d")||{}).textContent||"";
+    var mm={NOV:11,DEC:12}[t.split(" ")[0]], dd=parseInt(t.split(" ")[1],10);
+    if(mm&&dd){ var md=new Date(2026,mm-1,dd); if(md<today) r.classList.add("done"); else r.classList.remove("done"); }
+  });
 </script>

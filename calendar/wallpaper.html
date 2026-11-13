@@ -29,7 +29,7 @@
   <div class="goal">DECOY<br><em>WORD PACKS</em></div>
   <div class="sub">Custom word packs, live for players · Dec 31 2026</div>
   <div class="rule"></div>
-  <div class="big"><b>59</b><i>days left<br>of 61</i></div>
+  <div class="big"><b id="n">--</b><i>days left<br>of <span id="tot">61</span></i></div>
   <div class="grid" id="g"></div>
   <div class="legend">
     <span><i class="chip t"></i>torn off</span>
@@ -42,22 +42,33 @@
     <div class="row"><span class="d">DEC 07</span><span class="t">Playtest with 6 players</span></div>
     <div class="row"><span class="d">DEC 28</span><span class="t">Ship — 3 days spare</span></div>
   </div>
-  <div class="foot"><span>K. Sojitra</span><span>Nov–Dec 2026</span></div>
+  <div class="foot"><span>G. Savaliya</span><span>Nov–Dec 2026</span></div>
 </div></div>
 <script>
   var MARK = {"11-16":1, "12-7":1, "12-28":1};
+  var START = new Date(2026,10,1), END = new Date(2026,11,31);
+  var now = new Date(); var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var DAY = 864e5;
+  document.getElementById("tot").textContent = Math.round((END-START)/DAY)+1;
+  document.getElementById("n").textContent = Math.max(0, Math.round((END-today)/DAY));
   var g = document.getElementById("g"), out = "";
   function days(m,y){ return new Date(y,m,0).getDate(); }
   [[11,2026],[12,2026]].forEach(function(my){
     var m=my[0], y=my[1];
     for(var d=1; d<=days(m,y); d++){
-      var cls="cell";
-      if(m===11 && d<2) cls+=" torn";
-      else if(m===11 && d===2) cls+=" today";
+      var cell = new Date(y, m-1, d), cls="cell";
+      if(cell < today) cls+=" torn";
+      else if(+cell === +today) cls+=" today";
       else if(MARK[m+"-"+d]) cls+=" mark";
       else cls+=" left";
       out += '<div class="'+cls+'"><span>'+d+'</span></div>';
     }
   });
   g.innerHTML = out;
+  document.querySelectorAll(".ms .row").forEach(function(r){
+    var t=(r.querySelector(".d")||{}).textContent||"";
+    var mm={JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12}[t.split(" ")[0]];
+    var dd=parseInt(t.split(" ")[1],10);
+    if(mm && dd){ var md=new Date(2026, mm-1, dd); if(md < today) r.classList.add("done"); else r.classList.remove("done"); }
+  });
 </script>
